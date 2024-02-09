@@ -1,0 +1,148 @@
+﻿@using MyCalculator.Calculator;
+@inject CalculatorService _calculatorService;
+@page "/calculator"
+
+<h1>Calculator</h1>
+<br />
+<p style="width: 300px;height: 30px; border: 2px solid black; padding: 2px">@calculatorTextBox</p>
+<br />
+<label>Result Rounding:</label>
+<input type="checkbox" checked="@isChecked" @oninput="CheckboxChanged" />
+<br />
+<br />
+<table>
+    <tr>
+        <td>
+            <button class="btn btn-primary" @onclick="() => InsertDigit(1)">1</button>
+        </td>
+        <td>
+            <button class="btn btn-primary" @onclick="() => InsertDigit(2)">2</button>
+        </td>
+        <td>
+            <button class="btn btn-primary" @onclick="() => InsertDigit(3)">3</button>
+        </td>
+        <td>
+            <button class="btn btn-primary" @onclick="() => InsertOperation(ICalculatorService.OperationType.Add)">+</button>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <button class="btn btn-primary" @onclick="() => InsertDigit(4)">4</button>
+        </td>
+        <td>
+            <button class="btn btn-primary" @onclick="() => InsertDigit(5)">5</button>
+        </td>
+        <td>
+            <button class="btn btn-primary" @onclick="() => InsertDigit(6)">6</button>
+        </td>
+        <td>
+            <button class="btn btn-primary" @onclick="() => InsertOperation(ICalculatorService.OperationType.Deduct)">-</button>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <button class="btn btn-primary" @onclick="() => InsertDigit(7)">7</button>
+        </td>
+        <td>
+            <button class="btn btn-primary" @onclick="() => InsertDigit(8)">8</button>
+        </td>
+        <td>
+            <button class="btn btn-primary" @onclick="() => InsertDigit(9)">9</button>
+        </td>
+        <td>
+            <button class="btn btn-primary" @onclick="() => InsertOperation(ICalculatorService.OperationType.Multiply)">*</button>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <button class="btn btn-primary" @onclick="() => InsertDigit(0)">0</button>
+        </td>
+        <td>
+            <button class="btn btn-primary" @onclick="InsertDecimalPoint">.</button>
+        </td>
+        <td>
+            <button class="btn btn-primary" @onclick="Cancel">C</button>
+        </td>
+        <td>
+            <button class="btn btn-primary" @onclick="() => InsertOperation(ICalculatorService.OperationType.Divide)">/</button>
+        </td>
+    </tr>
+</table>
+<br />
+<button class="btn btn-primary" @onclick="Compute">Compute</button>
+<br />
+<br />
+<h3>Computations history</h3>
+<table>
+    @foreach (var computation in computations)
+    {
+        <tr><td>@computation</td></tr>
+    } 
+</table>
+<br />
+<br />
+<h3>Errors</h3>
+<table>
+    @foreach (var error in errors)
+    {
+        <tr><td>@error</td></tr>
+    }
+</table>
+
+
+
+@code {
+    private string calculatorTextBox = string.Empty;
+    private IEnumerable<string> errors = new List<string>();
+    private IEnumerable<string> computations = new List<string>();
+
+    private bool isChecked;
+
+    private void CheckboxChanged(ChangeEventArgs e)
+    {
+        isChecked = (bool)e.Value;
+        _calculatorService.IsRoundedToInt = isChecked;
+    }
+
+    private void InsertDigit(int i)
+    {
+        _calculatorService.InsertDigit(i);
+
+        Update();
+    }
+
+    private void InsertOperation(ICalculatorService.OperationType opType)
+    {
+        _calculatorService.InsertOperation(opType);
+
+        Update();
+    }
+
+    private void InsertDecimalPoint()
+    {
+        _calculatorService.InsertDecimalPoint();
+
+        Update();
+    }
+
+    private void Cancel()
+    {
+        _calculatorService.Cancel();
+
+        Update();
+    }
+
+    private void Compute()
+    {
+        _calculatorService.Compute();
+
+        Update();
+    }
+
+    private void Update()
+    {
+        calculatorTextBox = _calculatorService.CalculatorText;
+        errors = _calculatorService.Errors;
+        computations = _calculatorService.Computations;
+    }
+}

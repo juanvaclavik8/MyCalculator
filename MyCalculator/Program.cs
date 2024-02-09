@@ -1,5 +1,5 @@
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
+using MyCalculator.Calculator;
+using MyCalculator.DAL;
 using MyCalculator.Data;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,6 +8,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<WeatherForecastService>();
+builder.Services.AddScoped<CalculatorService>();
+builder.Services.AddScoped<IDataAccess,DataAccessService>();
 
 var app = builder.Build();
 
